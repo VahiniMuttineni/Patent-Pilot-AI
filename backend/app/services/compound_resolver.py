@@ -128,6 +128,23 @@ class CompoundResolverService:
             num_rotatable_bonds = int(rdMolDescriptors.CalcNumRotatableBonds(mol))
             num_hbd = int(rdMolDescriptors.CalcNumHBD(mol))
             num_hba = int(rdMolDescriptors.CalcNumHBA(mol))
+            num_atoms = int(mol.GetNumAtoms())
+            num_bonds = int(mol.GetNumBonds())
+            
+            lipinski_violations = 0
+            if molecular_weight > 500: lipinski_violations += 1
+            if logp > 5: lipinski_violations += 1
+            if num_hbd > 5: lipinski_violations += 1
+            if num_hba > 10: lipinski_violations += 1
+            lipinski_compliant = (lipinski_violations <= 1)
+            
+            pharmacophore_features = []
+            from app.services.molecule_service import COMMON_PHARMACOPHORES
+            for name, smarts in COMMON_PHARMACOPHORES.items():
+                pat = Chem.MolFromSmarts(smarts)
+                if pat and mol.HasSubstructMatch(pat):
+                    pharmacophore_features.append(name)
+                    
         except Exception as e:
             raise CompoundResolutionError(f"Failed to extract RDKit descriptors for SMILES '{smiles}': {str(e)}")
 
@@ -258,6 +275,7 @@ class CompoundResolverService:
         clean_synonyms = [s for s in synonyms if s and s.lower() != (preferred_name or "").lower()][:8]
 
         return {
+            "compound_name": preferred_name,
             "preferred_name": preferred_name,
             "iupac_name": iupac_name or preferred_name,
             "synonyms": clean_synonyms,
@@ -268,6 +286,8 @@ class CompoundResolverService:
             "molecular_formula": molecular_formula,
             "molecular_weight": molecular_weight,
             "exact_mass": exact_mass,
+            "num_atoms": num_atoms,
+            "num_bonds": num_bonds,
             "logp": logp,
             "tpsa": tpsa,
             "heavy_atom_count": heavy_atom_count,
@@ -275,6 +295,9 @@ class CompoundResolverService:
             "num_rotatable_bonds": num_rotatable_bonds,
             "num_hbd": num_hbd,
             "num_hba": num_hba,
+            "lipinski_violations": lipinski_violations,
+            "lipinski_compliant": lipinski_compliant,
+            "pharmacophore_features": pharmacophore_features,
             "pubchem_cid": pubchem_cid,
             "chembl_id": chembl_id,
             "chemspider_id": chemspider_id,
