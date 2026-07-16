@@ -16,6 +16,16 @@
 
 ---
 
+## ✨ Core Features
+
+* **Visual Structure Comparison**: Interactively compare the input molecular structure against patented Markush structures side-by-side using SMILES string rendering.
+* **5-Step Compound Resolution**: Deterministically resolves chemical identities cross-referencing PubChem, ChemSpider, and ChEMBL before falling back to RDKit structural descriptors.
+* **Unified Patent Retrieval**: Aggregates prior art claims from Lens.org API, OpenAlex, and PubMed concurrently using asynchronous fetchers.
+* **Explainable AI Analysis**: Google Gemini 2.0 multi-agent RAG workflow reads patent claims to synthesize legally sound FTO probability scores and infringement risks.
+* **Hybrid Vector Scoring**: Merges precise ECFP4 fingerprint similarity (Tanimoto) with FAISS dense vector NLP embeddings for accurate patent ranking.
+
+---
+
 ## 🏗️ Architecture
 
 ```mermaid
