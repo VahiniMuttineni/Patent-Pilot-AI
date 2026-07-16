@@ -1,6 +1,5 @@
 import time
 import uuid
-import logging
 from typing import Callable, Awaitable
 
 from fastapi import Request, Response, HTTPException
@@ -8,8 +7,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-
-logger = logging.getLogger(__name__)
+from app.core.logging import logger
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
     """

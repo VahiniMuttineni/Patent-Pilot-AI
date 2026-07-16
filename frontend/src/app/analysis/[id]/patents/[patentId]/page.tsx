@@ -118,8 +118,8 @@ export default function PatentDetailsPage() {
                 className={cn(
                   "flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs font-medium transition-colors ml-1 shadow-sm",
                   compareMode
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary"
+                    ? "border-primary bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-1 ring-offset-background"
+                    : "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow"
                 )}
               >
                 <GitCompare className="h-3.5 w-3.5" />

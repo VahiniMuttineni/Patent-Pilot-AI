@@ -4,18 +4,44 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.responses import JSONResponse
+import logging
 from app.core.config import settings
 from app.api.routers import auth
 from app.core.database import engine
 from app.models.base import Base
 
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    logger.info(f"Starting {settings.PROJECT_NAME} in {settings.ENVIRONMENT} mode...")
+    
+    # Verify critical connections before fully accepting requests
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database connection and migrations verified.")
+    except Exception as e:
+        logger.critical(f"Database connection failed: {e}")
+        if settings.ENVIRONMENT == "production":
+            raise e # Fail fast in production
+            
+    # Verify Redis
+    if settings.REDIS_URL:
+        import redis.asyncio as redis
+        try:
+            client = redis.from_url(settings.REDIS_URL)
+            await client.ping()
+            await client.aclose()
+            logger.info("Redis cache connection verified.")
+        except Exception as e:
+            logger.warning(f"Redis cache connection failed: {e}. Running without cache.")
+            
+    logger.info("Application startup complete.")
     yield
-
+    logger.info("Application shutdown initiated.")
+    await engine.dispose()
+    logger.info("Database engine disposed.")
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -52,12 +78,13 @@ def create_app() -> FastAPI:
 
     @app.exception_handler(Exception)
     async def general_exception_handler(request, exc):
+        logger.error(f"Unhandled general exception: {exc}", exc_info=True)
         return JSONResponse(
             status_code=500,
             content={
                 "success": False,
                 "message": "An unexpected error occurred",
-                "error": str(exc),
+                "error": str(exc) if settings.ENVIRONMENT != "production" else "Internal server error",
                 "code": "INTERNAL_SERVER_ERROR"
             }
         )
@@ -70,10 +97,10 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestTimingAndLoggingMiddleware)
     app.add_middleware(RequestIDMiddleware)
 
-    # Set all CORS enabled origins
+    # Configure CORS securely for production
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # configure properly in production
+        allow_origins=settings.cors_origins_list,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

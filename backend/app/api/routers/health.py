@@ -54,12 +54,21 @@ async def liveness_check(response: Response, db: AsyncSession = Depends(get_db))
     else:
         status["redis"] = "disabled"
         
-    # 3. Gemini Check
-    api_key = getattr(settings, "GEMINI_API_KEY", None)
-    if api_key and api_key != "mock-api-key":
-        status["gemini"] = "configured"
+    # 3. Gemini / Groq Check
+    status["llm_provider"] = settings.LLM_PROVIDER
+    if settings.LLM_PROVIDER == "groq":
+        status["llm_status"] = "configured" if getattr(settings, "GROQ_API_KEY", None) else "missing"
+    elif settings.LLM_PROVIDER == "gemini":
+        status["llm_status"] = "configured" if getattr(settings, "GEMINI_API_KEY", None) else "missing"
     else:
-        status["gemini"] = "mocked/disabled"
+        status["llm_status"] = "local"
+        
+    # 4. External Providers Check
+    status["external_providers"] = {
+        "lens_api": "configured" if getattr(settings, "LENS_API_TOKEN", None) else "missing",
+        "ncbi_api": "configured" if getattr(settings, "NCBI_API_KEY", None) else "missing",
+        "chemspider_api": "configured" if getattr(settings, "CHEMSPIDER_API_KEY", None) else "missing",
+    }
         
     # Determine overall status code based on hard dependencies
     overall_code = 200

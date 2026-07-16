@@ -1,0 +1,61 @@
+# ==============================================================================
+# Render Infrastructure-as-Code Blueprint
+# ==============================================================================
+services:
+  # 1. PatentPilot Backend Web Service
+  - type: web
+    name: patentpilot-api
+    env: docker
+    region: oregon
+    plan: starter
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    autoDeploy: false
+    healthCheckPath: /api/v1/health
+    
+    # Environment Variables
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: patentpilot-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: patentpilot-redis
+          property: connectionString
+      
+      # Secrets (Set these in the Render Dashboard)
+      - key: SECRET_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: LENS_API_TOKEN
+        sync: false
+        
+      # Configuration
+      - key: LLM_PROVIDER
+        value: groq
+      - key: CORS_ORIGINS
+        sync: false # Set this to the Vercel Frontend URL
+
+  # 2. Redis Cache Service
+  - type: redis
+    name: patentpilot-redis
+    region: oregon
+    plan: free
+    ipAllowList: [] # internal only
+
+databases:
+  # 3. PostgreSQL Database
+  - name: patentpilot-db
+    databaseName: patentpilot
+    user: postgres
+    region: oregon
+    plan: starter
