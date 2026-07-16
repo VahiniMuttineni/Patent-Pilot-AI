@@ -3,11 +3,14 @@ from .pubchem import PubChemProvider
 from .chembl import ChEMBLProvider
 from .google_patents import GooglePatentsProvider
 from .pubmed import PubMedProvider
+from .lens_patents import LensPatentProvider
 
 __all__ = [
     "PatentProviderAdapter",
     "PubChemProvider",
     "ChEMBLProvider",
     "GooglePatentsProvider",
-    "PubMedProvider"
+    "PubMedProvider",
+    "LensPatentProvider"
 ]
+

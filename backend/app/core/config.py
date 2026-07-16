@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     # Google OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
 
+    # Lens.org Patent API
+    LENS_API_TOKEN: Optional[str] = "I0e9XO4GdCd6X4scRkZ2t0RFRzj8nfqeMnIhS5adVhPLwbj6KR7m"
+
+
     model_config = SettingsConfigDict(env_file=ENV_FILE, env_ignore_empty=True, extra="ignore")
 
 

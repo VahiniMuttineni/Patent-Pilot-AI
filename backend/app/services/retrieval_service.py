@@ -6,7 +6,7 @@ import redis.asyncio as redis
 from pydantic import TypeAdapter
 
 from app.schemas.retrieval import UnifiedPatent, RetrievalMetrics, RetrievalResult, ProviderResponse, ProviderMetadata
-from app.services.providers import PatentProviderAdapter, PubChemProvider, ChEMBLProvider, GooglePatentsProvider, PubMedProvider
+from app.services.providers import PatentProviderAdapter, PubChemProvider, ChEMBLProvider, GooglePatentsProvider, PubMedProvider, LensPatentProvider
 
 logger = logging.getLogger(__name__)
 
@@ -22,10 +22,12 @@ class RetrievalService:
                 PubChemProvider(),
                 ChEMBLProvider(),
                 GooglePatentsProvider(),
-                PubMedProvider()
+                PubMedProvider(),
+                LensPatentProvider()
             ]
         else:
             self.providers = providers
+
             
         self.redis_client = redis_client
         self.cache_ttl = 60 * 60 * 24 # 24 hours
