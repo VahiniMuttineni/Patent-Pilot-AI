@@ -27,21 +27,21 @@ By combining **RDKit chemical informatics**, public molecular databases (**PubCh
 
 ```mermaid
 graph TD
-    subgraph Client Layer
-        UI["Next.js 15 App Router<br/>(Tailwind CSS, OKLCH Design System, Framer Motion)"]
+    subgraph client ["Client Layer"]
+        UI["Next.js 15 App Router - Tailwind CSS, OKLCH, Framer Motion"]
     end
 
-    subgraph Backend API Gateway (FastAPI Async)
+    subgraph gateway ["Backend API Gateway (FastAPI Async)"]
         Router["REST / RAG SSE Endpoints"]
         Orchestrator["Search Orchestrator Engine"]
         CompoundResolver["Deterministic Compound Resolution Pipeline"]
     end
 
-    subgraph Chemical Informatics Engine
-        RDKit["RDKit Core<br/>(ECFP4 Morgan Fingerprints, LogP, TPSA, Lipinski)"]
+    subgraph chem ["Chemical Informatics Engine"]
+        RDKit["RDKit Core - ECFP4 Fingerprints, LogP, TPSA, Lipinski"]
     end
 
-    subgraph Public Molecular & Literature Data
+    subgraph providers ["Public Molecular & Literature Data"]
         PubChem["PubChem PUG REST API"]
         ChEMBL["EBI ChEMBL API"]
         ChemSpider["RSC / ChemSpider ID"]
@@ -49,13 +49,13 @@ graph TD
         PubMed["NCBI PubMed API"]
     end
 
-    subgraph AI Vector & Synthesis Layer
+    subgraph ai ["AI Vector & Synthesis Layer"]
         FAISS["FAISS Dense Vector Store"]
         Embeddings["Embedding Service"]
         LLM["Google Gemini 2.0 Multi-Agent RAG"]
     end
 
-    subgraph Persistence Layer
+    subgraph persistence ["Persistence Layer"]
         DB[(PostgreSQL Database)]
         Cache[(Redis Response Cache)]
     end
@@ -76,6 +76,7 @@ graph TD
     Orchestrator --> DB
     Orchestrator --> Cache
 ```
+
 
 ---
 
