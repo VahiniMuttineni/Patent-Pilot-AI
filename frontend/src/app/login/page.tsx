@@ -151,12 +151,6 @@ export default function LoginPage() {
               <p className="text-xs text-text-secondary mt-1 tracking-wide">Freedom-to-Operate workspace</p>
             </div>
 
-            {/* Demo Credentials Box */}
-            <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 text-center mb-6 shadow-soft">
-              <p className="text-xs text-primary font-medium mb-0.5">Demo credentials:</p>
-              <p className="text-sm font-mono text-success">demo@example.com / password123</p>
-            </div>
-
             {/* Main Form */}
             <div className="space-y-4">
               {/* Google Login (Primary) */}
@@ -177,25 +171,6 @@ export default function LoginPage() {
                   </svg>
                 )}
                 <span>Continue with Google</span>
-              </button>
-
-
-              {/* Divider */}
-              <div className="relative flex py-5 items-center">
-                <div className="flex-grow border-t border-border"></div>
-                <span className="flex-shrink mx-4 text-xs uppercase tracking-widest text-text-tertiary font-medium">OR</span>
-                <div className="flex-grow border-t border-border"></div>
-              </div>
-
-              {/* Demo Login (Secondary) */}
-              <button 
-                type="button" 
-                onClick={() => loginMutation.mutate({ email: "demo@example.com", password: "password123" })}
-                disabled={loginMutation.isPending || googleMutation.isPending}
-                className="w-full bg-surface-raised border border-border hover:bg-surface-hover text-text-primary font-medium rounded-xl py-3 text-sm flex items-center justify-center space-x-2 transition-all shadow-soft disabled:opacity-70"
-              >
-                {loginMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                <span>Sign in as Demo User</span>
               </button>
 
               {errorMsg && (
