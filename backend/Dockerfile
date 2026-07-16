@@ -60,4 +60,4 @@ USER pythonapp
 EXPOSE 8000
 
 # Start command utilizing Render's dynamic PORT binding
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
