@@ -38,8 +38,7 @@ class SearchStatusResponse(BaseModel):
 # Dependencies for orchestrator (in a real app, use a DI container like fast_depends or manually construct)
 async def get_orchestrator(db: AsyncSession = Depends(get_db)) -> SearchOrchestratorService:
     molecule_svc = MoleculeService()
-    redis_client = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
-    retrieval_svc = RetrievalService(redis_client=redis_client)
+    retrieval_svc = RetrievalService(redis_client=None)
     embedding_svc = EmbeddingService()
     ranking_svc = RankingService(embedding_service=embedding_svc)
     report_gen = ReportGenerator()

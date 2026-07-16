@@ -42,17 +42,8 @@ async def liveness_check(response: Response, db: AsyncSession = Depends(get_db))
     except Exception as e:
         status["database"] = f"unhealthy: {str(e)}"
         
-    # 2. Redis Check
-    if settings.REDIS_URL:
-        try:
-            client = redis.from_url(settings.REDIS_URL)
-            await client.ping()
-            status["redis"] = "healthy"
-            await client.aclose()
-        except Exception as e:
-            status["redis"] = f"unhealthy: {str(e)}"
-    else:
-        status["redis"] = "disabled"
+    # 2. Redis Check (Disabled)
+    status["redis"] = "disabled"
         
     # 3. Gemini / Groq Check
     status["llm_provider"] = settings.LLM_PROVIDER
