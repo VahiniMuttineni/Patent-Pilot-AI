@@ -69,4 +69,5 @@ USER pythonapp
 EXPOSE 8000
 
 # Start command utilizing Render's dynamic PORT binding
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Automatically runs database migrations before booting the server
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
