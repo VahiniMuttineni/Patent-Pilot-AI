@@ -42,10 +42,12 @@ ENV MALLOC_ARENA_MAX=2
 # Force garbage collection to run more aggressively
 ENV PYTHONGC=2
 
-# Install runtime dependencies only (libpq for asyncpg)
+# Install runtime dependencies only (libpq for asyncpg, X11 for RDKit drawing)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     libgomp1 \
+    libxrender1 \
+    libxext6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
