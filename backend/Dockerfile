@@ -48,6 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     libxrender1 \
     libxext6 \
+    libexpat1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
