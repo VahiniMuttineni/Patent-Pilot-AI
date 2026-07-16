@@ -56,6 +56,5 @@ databases:
   # 3. PostgreSQL Database
   - name: patentpilot-db
     databaseName: patentpilot
-    user: postgres
     region: oregon
     plan: starter
