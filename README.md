@@ -464,16 +464,3 @@ docker run -p 8000:8000 --env-file ./backend/.env patentpilot-backend
 * `GET /api/v1/molecules/render-svg` - Generates clean vector SVG molecule drawings from SMILES query parameter.
 
 ---
-
-## 🖼️ 27. Screenshots Placeholder
-> *Add interactive dashboard and enterprise report preview screenshots here.*
-
----
-
-## 👥 28. Contributors
-* **Vahini Muttineni** - *Lead Software Engineer & Cheminformatics Architect*
-
----
-
-## 📄 29. License
-Distributed under the **MIT License**. See `LICENSE` for more information.
