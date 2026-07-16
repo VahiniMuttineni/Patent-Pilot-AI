@@ -234,15 +234,15 @@ cd patentpilot-frontend
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/patentpilot
 REDIS_URL=redis://localhost:6379/0
 GEMINI_API_KEY=your_gemini_api_key_here
-GOOGLE_CLIENT_ID=221478785780-sf7dvi5phsuu40ct14h8n4n4s2d7tj6q.apps.googleusercontent.com
-SECRET_KEY=patentpilot_enterprise_secret_key_2026
+GOOGLE_CLIENT_ID=your_google_client_id_here
+SECRET_KEY=your_secret_key_here
 ```
 
 #### Create Frontend Environment File (`frontend/.env.local`):
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=221478785780-sf7dvi5phsuu40ct14h8n4n4s2d7tj6q.apps.googleusercontent.com
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id_here
 ```
 
 ---
@@ -287,10 +287,3 @@ Verify local functionality using the test molecules:
 6. Imatinib     (Cc1ccc(NC(=O)...)            -> CID 5291
 ```
 
----
-
-<div align="center">
-
-**Developed by Google DeepMind Team paired with Vahini Muttineni** • *PatentPilot AI 2026*
-
-</div>
