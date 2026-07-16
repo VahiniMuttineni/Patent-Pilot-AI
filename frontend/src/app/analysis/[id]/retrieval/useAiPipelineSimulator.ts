@@ -115,10 +115,10 @@ export function useAiPipelineSimulator(backendDone: boolean) {
         setMetrics((m) => ({ ...m, molecules: m.molecules + Math.floor(Math.random() * 3) }));
       }
       if (currentStage >= 3 && currentStage <= 7) {
-        setMetrics((m) => ({ ...m, patents: m.patents + Math.floor(Math.random() * 10) }));
+        setMetrics((m) => ({ ...m, patents: Math.min(10, m.patents + Math.floor(Math.random() * 2)) }));
       }
       if (currentStage >= 5 && currentStage <= 8) {
-        setMetrics((m) => ({ ...m, papers: m.papers + Math.floor(Math.random() * 5) }));
+        setMetrics((m) => ({ ...m, papers: Math.min(10, m.papers + Math.floor(Math.random() * 2)) }));
       }
     }, 1000);
 
