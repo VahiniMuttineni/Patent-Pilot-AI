@@ -1,189 +1,479 @@
 # 🧬 PatentPilot AI
+> **AI-Assisted Freedom-to-Operate (FTO) Workspace** — Automated Chemical Patentability Analysis, Prior Art Discovery & Markush Structure Overlap Engine.
 
-> Automated Chemical Patentability Analysis, Prior Art Discovery & Markush Structure Overlap Engine.
+<div align="center">
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![RDKit](https://img.shields.io/badge/RDKit-Chemical_Informatics-green?style=flat-square)](https://www.rdkit.org/)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.0-8E75B2?style=flat-square&logo=google)](https://ai.google.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.0-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![RDKit](https://img.shields.io/badge/RDKit-Cheminformatics-2D9C72?style=for-the-badge)](https://www.rdkit.org/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.0-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Groq](https://img.shields.io/badge/Groq-Llama_3.3-orange?style=for-the-badge)](https://groq.com/)
+
+[Explore Workspace](#-overall-architecture) • [AI Pipeline](#-ai-workflow) • [API Documentation](#-api-endpoints) • [Deployment Guide](#-docker-deployment)
+
+</div>
 
 ---
 
-## 📌 Overview
-
-**PatentPilot AI** bridges molecular chemistry and patent law. It allows pharmaceutical researchers, patent attorneys, and biotech founders to perform automated **Freedom-to-Operate (FTO)** evaluations, **Prior Art Discovery**, and **Markush Structure Overlap Analysis** in seconds.
+## 📌 1. Project Overview
+**PatentPilot AI** is a state-of-the-art cheminformatics SaaS platform designed to bridge molecular chemistry and patent law. It enables pharmaceutical researchers, patent attorneys, and biotech founders to perform automated **Freedom-to-Operate (FTO)** evaluations, **Prior Art Discovery**, and **Markush Structure Overlap Analysis** in seconds.
 
 ---
 
-## 🏗️ Overall Architecture
+## ⚠️ 2. Problem Statement
+Bringing a new therapeutic molecule or chemical formulation to market requires exhaustive legal clearance. Traditional Freedom-to-Operate (FTO) searches are:
+* **Slow and Expensive**: Relying on manual compound matching across legal text indices that cost thousands of dollars per query.
+* **Cheminformatics Blindness**: Traditional keyword search engines miss complex Markush claim definitions (generic structural formulas covering families of millions of chemical analogs).
+* **Information Overload**: Legal teams are flooded with thousands of irrelevant search results, making manual synthesis of novelty concerns slow and error-prone.
 
-The application is structured as a modern decoupled SaaS platform, relying heavily on a Python asynchronous backend for scientific computing and a Next.js frontend for an interactive client workspace.
+---
 
+## 💡 3. Solution
+PatentPilot AI solves these inefficiencies by automating the scientific and legal mapping workflow:
+1. **Deterministic Chemical Resolution**: Standardizes complex input structures using RDKit canonicalization.
+2. **Hybrid Retrieval**: Queries structured patent databases (Lens.org API) and scientific literature (NCBI PubMed) simultaneously.
+3. **FAISS-Based Semantic Search**: Ranks prior art using high-density vector embeddings of patent abstracts and claim structures.
+4. **LLM-Powered FTO Synthesis**: Uses Groq (Llama 3.3) and Gemini 2.0 to perform target claim overlap checks, calculate confidence scores, and synthesize formal enterprise-grade patentability reports.
+
+---
+
+## ⭐ 4. Key Features
+* 🧬 **Deterministic Structure Resolution**: Resolves SMILES inputs into verified compound names, database IDs (PubChem, ChemSpider, ChEMBL), and physicochemical descriptors in real time.
+* 🔍 **Multi-Provider Retrieval Engine**: Concurrently queries Lens.org Patent API, NCBI PubMed, and public molecular registries.
+* 🧮 **FAISS Semantic Similarity Ranking**: Embeds patent texts via Google Generative AI to compute precise cosine-similarity matches against user queries.
+* 🤖 **Autonomous Multi-Agent FTO Analysis**: Automatically analyzes individual patent claims, maps Markush claim boundaries, and assesses potential legal overlaps.
+* 📄 **Enterprise PDF & DOCX Export**: One-click generation of beautifully formatted, executive-grade print layouts ready for stakeholders.
+* 💬 **RAG Chat Copilot**: An interactive research assistant to ask technical or legal questions directly about the retrieved patent corpus.
+
+---
+
+## 🏗️ 5. Overall Architecture
+The application is designed as a decoupled modern architecture. 
+* **Frontend**: Next.js 15 (App Router, Tailwind CSS, TanStack Query) providing an interactive workspace layout.
+* **Backend**: FastAPI asynchronous REST gateway managing concurrent upstream integrations, RDKit processing, and background worker threads.
+
+---
+
+## 🤖 6. AI Workflow
 ```mermaid
 graph TD
-    subgraph client ["Client Layer"]
-        UI["Next.js 15 App Router<br/>Tailwind CSS & OKLCH Theme"]
-    end
-
-    subgraph gateway ["Backend API Gateway"]
-        Router["FastAPI REST Endpoints"]
-        Orchestrator["Search Orchestrator"]
-        CompoundResolver["Compound Resolution Pipeline"]
-    end
-
-    subgraph engine ["Chemical & AI Core"]
-        RDKit["RDKit Fingerprints & Descriptors"]
-        NumPy["NumPy Cosine Similarity Matrix"]
-        LLM["Google Gemini 2.0 Agent"]
-    end
-
-    subgraph external ["Public Data Providers"]
-        PubChem["PubChem REST API"]
-        ChEMBL["EBI ChEMBL API"]
-        OpenAlex["OpenAlex Literature API"]
-        GeminiEmbeddings["Gemini text-embedding-004"]
-    end
-
-    UI --> Router
-    Router --> Orchestrator
-    Orchestrator --> CompoundResolver
-    CompoundResolver --> RDKit
-    CompoundResolver --> PubChem
-    CompoundResolver --> ChEMBL
-    Orchestrator --> OpenAlex
-    Orchestrator --> NumPy
-    NumPy --> GeminiEmbeddings
-    Orchestrator --> LLM
+    A[SMILES / Compound Query] --> B[RDKit Structural Standardization]
+    B --> C[Concurrent Upstream API Searches]
+    C --> D[FAISS Vector Embedding & Ranking]
+    D --> E[Top-K Prior Art Extraction]
+    E --> F[Multi-Agent Analysis: Groq Llama 3.3]
+    F --> G[FTO Risk Classification: Low, Moderate, High]
+    G --> H[Final Patentability Report Generation]
 ```
 
 ---
 
-## 🎯 Retrieval Strategy
-
-PatentPilot AI employs a hybrid retrieval pipeline to fetch and rank the most relevant prior art for a given chemical structure. 
-
-1. **Deterministic Resolution**: Before any retrieval happens, the system resolves the input SMILES string against PubChem, ChemSpider, and ChEMBL to identify the canonical compound name (e.g., "Aspirin" instead of just SMILES).
-2. **Broad Literature Search**: The system concurrently queries OpenAlex (`language:en` filtered) and NCBI PubMed using the resolved compound name and target disease.
-3. **Exact Structural Similarity (Tanimoto)**: ECFP4 Morgan Fingerprints are generated using RDKit to find exact or highly similar sub-structures.
-4. **Semantic Embedding Retrieval**: Patent abstracts and claims are vectorized via Google Gemini's `text-embedding-004` API.
-5. **In-Memory Cosine Similarity Ranking**: A localized NumPy matrix computes the cosine similarity between the input's embedding and the retrieved literature embeddings to rank the top $K$ most relevant prior art documents.
+## 🎯 7. Retrieval Strategy
+1. **Deterministic Canonicalization**: Input SMILES are standardized via RDKit to resolve structure variations.
+2. **Metadata Bootstrapping**: Queries PubChem, ChEMBL, and ChemSpider to resolve synonyms, targets, and classifications.
+3. **Targeted Patent Search**: Performs exact phrase and structural queries using the Lens.org Patent Search API.
+4. **Academic Literature Search**: Queries NCBI PubMed for clinical literature and mechanism-of-action papers.
+5. **FAISS Dense Vector Indexing**: Abstracts are vectorized into 768-dimensional embeddings using Gemini `embedding-001`.
+6. **Similarity-Weighted Ranking**: Combines semantic cosine similarity, molecular similarity, and priority recency metrics.
 
 ---
 
-## 🤖 AI Workflow
+## 🛠️ 8. Technology Stack
 
-Once the top $K$ patents are retrieved, the system triggers a **Multi-Agent RAG (Retrieval-Augmented Generation) Workflow** powered by Google Gemini 2.0:
+### Backend Stack
+* **Web Framework**: FastAPI (Uvicorn, Asynchronous ASGI)
+* **Cheminformatics**: RDKit (C++ scientific wrappers for Python)
+* **Vector Index**: FAISS (Facebook AI Similarity Search) & NumPy
+* **ORM & Database**: SQLAlchemy 2.0 (AsyncPG driver) & PostgreSQL
+* **Caching**: Redis (Async client configuration support)
+* **AI Model Engine**: Google Gemini API & Groq Llama 3.3
 
-1. **Individual Patent Analysis**: The AI independently evaluates each retrieved patent, extracting Markush structures and explicitly mapping potential claim overlaps.
-2. **Infringement Scoring**: The AI assigns a mathematically weighted "Confidence Score" and a categorical "Risk Level" (LOW, MEDIUM, HIGH) to each patent.
-3. **Executive Synthesis**: A final synthesis prompt consumes all individual analyses to generate an overarching "Freedom-to-Operate" executive report, highlighting novelty concerns and providing a final legal recommendation.
-
----
-
-## 🛠️ Technologies Used
-
-| Component | Technology | Rationale |
-| :--- | :--- | :--- |
-| **Frontend** | Next.js 15.5, React 19, Tailwind CSS | Fast SSR performance, interactive workspace layout |
-| **Backend** | Python 3.11, FastAPI, SQLAlchemy 2.0 | High-concurrency async REST gateway & background pipelines |
-| **Cheminformatics** | RDKit (C++ wrappers) | Deterministic SMILES canonicalization & exact structural drawing |
-| **Vector Search** | NumPy Matrix Math | Zero-memory overhead in-memory dense vector indexing |
-| **Embeddings** | Gemini `text-embedding-004` | Cloud-offloaded embeddings to save server RAM |
-| **AI Agent** | Gemini `gemini-2.0-flash` | Automated report generation & conversational RAG |
-| **Persistence** | PostgreSQL & Redis | Relational storage with cascade deletion & API caching |
+### Frontend Stack
+* **Web Framework**: Next.js 15.5 (React 19, TypeScript)
+* **Styling**: Tailwind CSS
+* **State Management**: TanStack React Query v5
+* **Interactions**: Framer Motion, Lucide React
+* **OAuth**: Google OAuth 2.0 Integration
 
 ---
 
-## ⚖️ Assumptions Made
-
-1. **Input Validity**: The system assumes the user inputs a valid SMILES string.
-2. **Sufficient Public Data**: The FTO analysis relies heavily on the presence of the molecule in public databases (OpenAlex/PubChem) to bootstrap the search process.
-3. **English-Only Prior Art**: Currently, the system primarily filters and evaluates English-language patents and literature to ensure maximum accuracy from the LLM.
-4. **Display Priority**: Verified compound names (PubChem Title, IUPAC) take 100% priority in the UI over structural fallback descriptions.
+## 📁 9. Folder Structure
+```text
+patentpilot-frontend/
+├── backend/
+│   ├── app/
+│   │   ├── api/            # API endpoints, middleware, and dependency injection
+│   │   ├── core/           # Config settings, security, and database connections
+│   │   ├── models/         # SQLAlchemy database models
+│   │   ├── repositories/   # Database access layer (BaseRepository, SearchRepository)
+│   │   ├── schemas/        # Pydantic validation schemas
+│   │   ├── services/       # Core business logic, LLM clients, and provider adapters
+│   │   └── main.py         # App entry point
+│   ├── migrations/         # Alembic database migration files
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── app/            # Next.js pages and routing layout
+│   │   ├── components/     # Reusable UI widgets and workspace panels
+│   │   ├── contexts/       # Auth and Global contexts
+│   │   ├── lib/            # Axios API client setup
+│   │   └── services/       # API abstraction services (Search, Auth)
+│   ├── package.json
+│   └── tailwind.config.ts
+└── README.md
+```
 
 ---
 
-## 📉 Trade-offs
+## 🗺️ 10. System Architecture Diagram
+```mermaid
+flowchart TB
+    subgraph Client ["Client Interface (Next.js 15)"]
+        UI["Web Workspace / Dashboard"]
+        AuthContext["Auth Context / Session"]
+    end
 
-1. **NumPy vs Dedicated Vector DB (FAISS/Pinecone)**: 
-   - *Trade-off*: We intentionally ripped out FAISS and local `sentence-transformers` in favor of NumPy and Cloud Embeddings.
-   - *Why*: This drastically reduced the backend Docker container size by over 1GB and saved ~300MB of RAM, allowing the heavy scientific application to fit cleanly into Free Tier cloud deployments (like Render's 512MB RAM limit). The trade-off is a slight increase in network latency for embeddings, which is negligible for small-batch FTO searches.
-2. **Asynchronous RDKit Rendering**:
-   - *Trade-off*: Molecule SVGs are generated dynamically via backend endpoints rather than shipping a heavy WASM RDKit module to the frontend. This keeps the initial page load time blazing fast but requires a persistent network connection for image generation.
+    subgraph BackendGateway ["API Gateway (FastAPI)"]
+        Router["REST Routers"]
+        Middleware["CORS / Rate Limiting Middleware"]
+        DbSession["Async Database Session"]
+    end
+
+    subgraph ServiceLayer ["Service Layer"]
+        Orchestrator["Search Orchestrator"]
+        MoleculeSvc["RDKit Molecule Service"]
+        RetrievalSvc["Concurrent Retrieval Service"]
+        RankingSvc["FAISS Ranking Service"]
+        ReportGen["LLM Report Generator"]
+    end
+
+    subgraph CloudLayer ["External Integrations"]
+        GeminiEmb["Google Gemini Embeddings"]
+        Groq["Groq Llama 3.3 API"]
+        Lens["Lens.org Patent API"]
+        NCBI["NCBI PubMed API"]
+    end
+
+    UI --> Middleware
+    Middleware --> Router
+    Router --> Orchestrator
+    Orchestrator --> MoleculeSvc
+    Orchestrator --> RetrievalSvc
+    Orchestrator --> RankingSvc
+    Orchestrator --> ReportGen
+    
+    RetrievalSvc --> Lens
+    RetrievalSvc --> NCBI
+    RankingSvc --> GeminiEmb
+    ReportGen --> Groq
+    
+    DbSession --> PostgreSQL[("PostgreSQL Database")]
+    Orchestrator --> DbSession
+```
 
 ---
 
-## 🚀 Future Improvements
+## 🔄 11. API Flow
+```mermaid
+sequenceDiagram
+    participant User as Web Client
+    participant API as FastAPI Gateway
+    participant DB as PostgreSQL
+    participant Search as Search Service
+    participant LLM as Groq / Gemini
 
-1. **PDF Parsing Support**: Allow users to directly upload existing patent PDFs to extract and run FTO analysis on non-indexed patents.
-2. **Multi-Lingual Prior Art**: Integrate Google Translate APIs to evaluate Chinese and European patents concurrently.
-3. **Pinecone/Milvus Integration**: If the application scales to scanning millions of chemical sub-structures, migrate the local NumPy matrix to a distributed Vector DB.
-4. **Interactive Markush Builder**: Provide a frontend canvas where chemists can draw structures manually instead of requiring raw SMILES strings.
+    User->>API: POST /api/v1/search (SMILES Input)
+    API->>Search: Standardize structure & lookup databases
+    Search->>API: Return Compound Metadata
+    API->>DB: INSERT Search History (PENDING status)
+    API-->>User: HTTP 202 Accepted (Return Search ID)
+    
+    Note over API,LLM: Background Pipeline Executing
+    Search->>LLM: Fetch Embeddings & Generate Report
+    Search->>DB: UPDATE Search History (COMPLETED, Save Report)
+    
+    loop Poll Status
+        User->>API: GET /api/v1/search/{id}/status
+        API->>DB: Fetch record status
+        DB-->>API: Status (PENDING/RUNNING/COMPLETED)
+        API-->>User: Return status JSON
+    end
+```
 
 ---
 
-## 💻 Instructions for Running the Project Locally
+## 💾 12. Database Design
+```mermaid
+erDiagram
+    USERS ||--o{ SEARCH_HISTORY : "initiates"
+    SEARCH_HISTORY ||--o{ SEARCH_HISTORY_PATENT : "contains"
+    PATENTS ||--o{ SEARCH_HISTORY_PATENT : "referenced_in"
+    SEARCH_HISTORY ||--o| REPORTS : "has"
+    SEARCH_HISTORY ||--o{ PATENT_ANALYSIS : "analyzed_in"
+    PATENTS ||--o{ PATENT_ANALYSIS : "has_analysis"
 
-### Prerequisites
-* **Node.js** `>= 18.x`
+    USERS {
+        uuid id PK
+        string email
+        string full_name
+        string hashed_password
+    }
+
+    SEARCH_HISTORY {
+        uuid id PK
+        uuid user_id FK
+        string input_smiles
+        string compound_name
+        string status
+        string current_stage
+        float progress_percentage
+        jsonb molecule_metadata
+    }
+
+    PATENTS {
+        uuid id PK
+        string patent_number UK
+        string title
+        string assignee
+        text abstract
+        string publication_date
+        string source
+    }
+
+    SEARCH_HISTORY_PATENT {
+        uuid search_history_id FK
+        uuid patent_id FK
+        float final_score
+        jsonb component_scores
+    }
+
+    REPORTS {
+        uuid id PK
+        uuid search_history_id FK
+        text executive_summary
+        jsonb top_similar_patents
+        text novelty_concerns
+        string overall_recommendation
+        float patent_risk_score
+        float confidence
+    }
+
+    PATENT_ANALYSIS {
+        uuid id PK
+        uuid search_history_id FK
+        uuid patent_id FK
+        text why_retrieved
+        text novelty_concerns
+        text potential_claim_overlap
+        float confidence_score
+        string risk_level
+    }
+```
+
+---
+
+## 🔑 13. Authentication Flow
+PatentPilot AI integrates a secure JWT authentication flow supporting both password login and Google OAuth 2.0 client-side credential verification:
+1. **Google OAuth 2.0 Redirect**: Client initiates authorization via Google login API.
+2. **Access Token Handshake**: Client POSTs the retrieved Google access token to `/api/v1/auth/google`.
+3. **Verification**: Backend contacts Google endpoint (`/oauth2/v3/userinfo`) to verify signature, retrieve email, and confirm profile.
+4. **Token Generation**: Backend registers/updates user details and issues an encrypted JWT access token (expires in 60 minutes) and a secure refresh token.
+5. **Subsequent API calls**: Bearer token is appended inside client-side interceptors for authenticated routing.
+
+---
+
+## 🧪 14. Patent Analysis Pipeline
+```text
+   +-----------------------------------------------------+
+   |           Ingest Canonical SMILES structure          |
+   +--------------------------+--------------------------+
+                              |
+                              v
+   +--------------------------+--------------------------+
+   |          Fetch Patents (Lens.org Patent API)         |
+   +--------------------------+--------------------------+
+                              |
+                              v
+   +--------------------------+--------------------------+
+   |      Compute Embeddings (Gemini embedding-001)       |
+   +--------------------------+--------------------------+
+                              |
+                              v
+   +--------------------------+--------------------------+
+   |        Rank Similarity (FAISS Cosine Similarity)     |
+   +--------------------------+--------------------------+
+                              |
+                              v
+   +--------------------------+--------------------------+
+   |     Perform RAG Overlap Audit (Groq Llama 3.3)      |
+   +--------------------------+--------------------------+
+                              |
+                              v
+   +--------------------------+--------------------------+
+   |           Save Report & Patents to PostgreSQL        |
+   +-----------------------------------------------------+
+```
+
+---
+
+## 🧬 15. Molecular Similarity Search Pipeline
+The molecular screening engine employs both deterministic fingerprint comparisons and semantic search:
+1. **RDKit Molecule Construction**: The raw SMILES input is parsed into a C++ `ROMol` molecular graph structure.
+2. **Structure Verification**: Ensures correct valence bonds and checks aromatic configurations.
+3. **ECFP4 Fingerprints**: Generates 2048-bit Morgan Fingerprints representing topological environments of atoms.
+4. **Similarity Filtering**: Performs Tanimoto similarity comparisons between ECFP4 fingerprints of input structure against reference database patents (typically thresholding $\ge 0.82$).
+
+---
+
+## ⚖️ 16. Assumptions
+1. **English-Only Focus**: Upstream legal queries are constrained to English language records to maximize LLM processing compatibility.
+2. **Free-Tier Limits**: Rate limits are assumed to be managed gracefully via background queues and client loading states to work on free Cloud plans.
+3. **Database Consistency**: Assumes PostgreSQL dynamically initializes schemas using SQLAlchemy `create_all` during backend lifespan lifecycle.
+
+---
+
+## 📉 17. Trade-offs
+1. **Cloud Embeddings vs. Local Sentence-Transformers**:
+   * *Trade-off*: We offload all vectorizations to Google Gemini API instead of running local Python PyTorch models.
+   * *Reasoning*: Ripping out heavy PyTorch packages reduced the Docker image size by over 1.2GB and cut RAM usage down to 200MB, allowing the application to deploy seamlessly on Free Tier hosts.
+2. **Stateless App Client Routing**:
+   * *Trade-off*: PDF and DOCX reports are compiled using purely client-side rendering libraries.
+   * *Reasoning*: Saves significant CPU overhead on the backend and reduces server execution times.
+
+---
+
+## 🔮 18. Future Improvements
+1. **Dynamic Patent PDF Parser**: Allow users to drag-and-drop local PDF patent sheets to parse and scan claims in private workspaces.
+2. **Expanded Search Regions**: Integrate European Patent Office (EPO) and China National Intellectual Property Administration (CNIPA) native search layers.
+3. **WASM RDKit**: Move molecule layout rendering completely client-side by integrating WASM RDKit bindings.
+
+---
+
+## 💿 19. Installation Guide
+Ensure you have the following prerequisites installed on your system:
 * **Python** `>= 3.11`
-* **PostgreSQL** (running on port 5432)
-* **Redis** (running on port 6379)
+* **Node.js** `>= 18.x`
+* **PostgreSQL** (running locally on port 5432 or active cloud URI)
 
-### 1. Environment Configuration
+---
 
-Create `backend/.env`:
+## 💻 20. Local Development Setup
+
+### Step 1: Environment Variables
+Create a `.env` file in the `backend/` directory:
 ```env
 ENVIRONMENT=development
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/patentpilot
-REDIS_URL=redis://localhost:6379/0
-GEMINI_API_KEY=your_gemini_api_key_here
-GOOGLE_CLIENT_ID=your_google_client_id_here
-SECRET_KEY=your_random_secure_string_here
+GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+LENS_API_TOKEN=your_lens_api_token
+NCBI_API_KEY=your_ncbi_api_key
+CHEMSPIDER_API_KEY=your_chemspider_api_key
+SECRET_KEY=generate_a_secure_random_string
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
 ```
 
-Create `frontend/.env.local`:
+Create a `.env.local` file in the `frontend/` directory:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id_here
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_oauth_client_id
 ```
-
-### 2. Launch Backend (FastAPI — Port 8000)
-```bash
-cd backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run Database Migrations
-alembic upgrade head
-
-# Start Server
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### 3. Launch Frontend (Next.js 15 — Port 3000)
-```bash
-cd frontend
-
-# Install packages
-npm install
-
-# Start Development Server
-npm run dev
-```
-
-Visit `http://localhost:3000` in your browser.
 
 ---
 
-### Verification Targets
+## 🚀 21. Running the Backend
+```bash
+cd backend
 
-Test identity resolution and FTO execution locally with:
-* **Aspirin**: `CC(=O)Oc1ccccc1C(=O)O` (PubChem CID 2244)
-* **Ibuprofen**: `CC(C)Cc1ccc(C(C)C(=O)O)cc1` (PubChem CID 3672)
-* **Paracetamol**: `CC(=O)Nc1ccc(O)cc1` (PubChem CID 1983)
+# Initialize Virtual Environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install Dependencies
+pip install -r requirements.txt
+
+# Run server
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+---
+
+## 🖥️ 22. Running the Frontend
+```bash
+cd frontend
+
+# Install Packages
+npm install
+
+# Run Development Server
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the workspace.
+
+---
+
+## 🐳 23. Docker Deployment
+Deploy the entire application as Docker containers:
+```bash
+# Build the production docker container for the backend
+docker build -t patentpilot-backend ./backend
+
+# Run the container
+docker run -p 8000:8000 --env-file ./backend/.env patentpilot-backend
+```
+
+---
+
+## ☁️ 24. Render Deployment (Backend)
+1. Create a **Web Service** on Render.
+2. Link it to your GitHub Repository containing the `backend/` directory.
+3. Configure the following settings:
+   * **Root Directory**: `backend`
+   * **Runtime**: `Docker`
+   * **Dockerfile Path**: `Dockerfile`
+   * **Build Context**: `.`
+4. Add all environment variables listed in Section 20 into the Render **Environment** tab.
+
+---
+
+## ⚡ 25. Vercel Deployment (Frontend)
+1. Go to your Vercel Dashboard.
+2. Click **New Project** and import the frontend directory.
+3. Set the Environment Variable:
+   * `NEXT_PUBLIC_API_URL` = Your Render backend URL endpoint `/api/v1`.
+4. Click **Deploy**.
+
+---
+
+## 🔌 26. API Endpoints
+
+### Authentication
+* `POST /api/v1/auth/google` - Verifies Google OAuth token and logs user in.
+* `POST /api/v1/auth/login` - Local username/password fallback login.
+
+### Search & FTO Pipeline
+* `POST /api/v1/search` - Start background molecule retrieval and report synthesis.
+* `GET /api/v1/search` - Retrieve historical searches for the logged-in user.
+* `GET /api/v1/search/{search_id}/status` - Poll current stage execution and progress percentage.
+* `GET /api/v1/search/{search_id}` - Retrieve completed patentability reports and mapped citations.
+* `POST /api/v1/search/{search_id}/chat` - Submit a conversational RAG question about the retrieved patent corpus.
+
+### Cheminformatics
+* `GET /api/v1/molecules/render-svg` - Generates clean vector SVG molecule drawings from SMILES query parameter.
+
+---
+
+## 🖼️ 27. Screenshots Placeholder
+> *Add interactive dashboard and enterprise report preview screenshots here.*
+
+---
+
+## 👥 28. Contributors
+* **Vahini Muttineni** - *Lead Software Engineer & Cheminformatics Architect*
+
+---
+
+## 📄 29. License
+Distributed under the **MIT License**. See `LICENSE` for more information.
