@@ -17,7 +17,7 @@ class PubChemProvider(PatentProviderAdapter):
         import urllib.parse
         encoded_smiles = urllib.parse.quote(canonical_smiles)
         
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=100.0) as client:
             try:
                 # 1. First, try exact CID lookup
                 url_cid = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{encoded_smiles}/cids/JSON"

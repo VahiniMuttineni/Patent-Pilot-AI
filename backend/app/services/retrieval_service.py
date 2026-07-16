@@ -123,7 +123,7 @@ class RetrievalService:
     async def _fetch_from_provider(self, provider: PatentProviderAdapter, canonical_smiles: str) -> ProviderResponse:
         try:
             # We enforce a timeout globally per provider call
-            return await asyncio.wait_for(provider.retrieve_by_smiles(canonical_smiles), timeout=45.0)
+            return await asyncio.wait_for(provider.retrieve_by_smiles(canonical_smiles), timeout=120.0)
         except Exception as e:
             raise e
 
