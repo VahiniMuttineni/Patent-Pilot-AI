@@ -113,7 +113,8 @@ class LensPatentProvider(PatentProviderAdapter):
                             publication_date=pub_date,
                             assignee=assignee,
                             abstract=abstract[:1500],
-                            markush_smiles=canonical_smiles
+                            markush_smiles=canonical_smiles,
+                            source=self.provider_name
                         )
                     )
 
