@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { Calendar, Users, FileText, ChevronRight, Quote, Globe, ExternalLink } from 'lucide-react';
 import { OpenAlexWork, openAlexService } from '@/services/openalex.service';
 
@@ -34,20 +33,18 @@ export function ResearchCard({ work }: ResearchCardProps) {
   const targetUrl = getArticleUrl(work);
 
 
-  // Use high-quality curated biotech/scientific images from Unsplash to act as figures/thumbnails
+  // Use beautiful CSS gradients instead of external images to guarantee 100% reliability (bypasses adblockers/CSP/IP blocks)
   const idStr = work.id || work.title || "";
   const hash = Array.from(idStr).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const hqImages = [
-    'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=400', // Science Monitor
-    'https://images.unsplash.com/photo-1532187643603-c11fce5d475a?auto=format&fit=crop&q=80&w=400', // Cells
-    'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=400', // Lab equipment
-    'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&q=80&w=400', // Scientist Pipette
-    'https://images.unsplash.com/photo-1579154204601-01588f351e71?auto=format&fit=crop&q=80&w=400', // Tubes
-    'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=400', // Flask
-    'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=400', // Microscopic virus
-    'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=400'  // Open Book
+  const gradients = [
+    'linear-gradient(135deg, rgba(37,99,235,0.25) 0%, rgba(147,51,234,0.25) 100%)',
+    'linear-gradient(135deg, rgba(5,150,105,0.25) 0%, rgba(13,148,136,0.25) 100%)',
+    'linear-gradient(135deg, rgba(220,38,38,0.25) 0%, rgba(217,119,6,0.25) 100%)',
+    'linear-gradient(135deg, rgba(219,39,119,0.25) 0%, rgba(225,29,72,0.25) 100%)',
+    'linear-gradient(135deg, rgba(79,70,229,0.25) 0%, rgba(8,145,178,0.25) 100%)',
+    'linear-gradient(135deg, rgba(14,165,233,0.25) 0%, rgba(99,102,241,0.25) 100%)'
   ];
-  const selectedImage = hqImages[hash % hqImages.length];
+  const selectedGradient = gradients[hash % gradients.length];
   
   const topConcept = work.concepts && work.concepts.length > 0 ? work.concepts[0].display_name : "Research";
 
@@ -58,16 +55,12 @@ export function ResearchCard({ work }: ResearchCardProps) {
       rel="noopener noreferrer"
       className="group border border-border bg-surface rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 flex flex-col h-full shadow-soft hover:shadow-glow cursor-pointer block text-left font-sans"
     >
-      {/* Thumbnail Area with High-Quality Image */}
-      <div className="h-44 w-full relative flex items-end justify-between p-3 border-b border-border bg-surface-raised overflow-hidden">
-        <Image 
-          src={selectedImage}
-          alt={work.title || "Research Publication"}
-          fill
-          className="object-cover z-0"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90 z-0"></div>
+      {/* Thumbnail Area with Dynamic CSS Gradient */}
+      <div 
+        className="h-44 w-full relative flex items-end justify-between p-3 border-b border-border bg-surface-raised"
+        style={{ backgroundImage: selectedGradient }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent opacity-90 z-0 pointer-events-none"></div>
         
         {/* Metadata Badges Overlay on Image */}
         <div className="relative z-10 flex flex-wrap gap-2 w-full">
