@@ -301,10 +301,10 @@ Return ONLY valid JSON in this exact structure:
     try:
         raw_content, metrics = await orchestrator.report_generator.llm_client.generate_content_json(prompt)
         cleaned = raw_content.strip()
-        if cleaned.startswith("```json"):
-            cleaned = cleaned.split("```json", 1)[1].rsplit("```", 1)[0].strip()
-        elif cleaned.startswith("```"):
-            cleaned = cleaned.split("```", 1)[1].rsplit("```", 1)[0].strip()
+        import re
+        match = re.search(r'\{.*\}', cleaned, re.DOTALL)
+        if match:
+            cleaned = match.group(0)
         data = json.loads(cleaned)
         answer = data.get("answer", "Based on the retrieved prior art, no immediate claim overlap conflicts were identified.")
         citations = data.get("citations", [])
