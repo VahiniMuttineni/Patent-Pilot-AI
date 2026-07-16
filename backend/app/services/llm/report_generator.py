@@ -132,12 +132,10 @@ Original Broken JSON:
                 raise RuntimeError(f"Failed to generate valid Patentability Report. Parse error: {e2}")
 
     def _strip_markdown(self, text: str) -> str:
-        """Helper to remove ```json ... ``` wrappers sometimes returned by LLMs."""
+        """Helper to extract JSON block robustly using regex."""
+        import re
         text = text.strip()
-        if text.startswith("```json"):
-            text = text[7:]
-        if text.startswith("```"):
-            text = text[3:]
-        if text.endswith("```"):
-            text = text[:-3]
-        return text.strip()
+        match = re.search(r'\{.*\}', text, re.DOTALL)
+        if match:
+            return match.group(0)
+        return text
