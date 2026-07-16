@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Calendar, Users, FileText, ChevronRight, Quote, Globe, ExternalLink } from 'lucide-react';
 import { OpenAlexWork, openAlexService } from '@/services/openalex.service';
 
@@ -58,11 +59,15 @@ export function ResearchCard({ work }: ResearchCardProps) {
       className="group border border-border bg-surface rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 flex flex-col h-full shadow-soft hover:shadow-glow cursor-pointer block text-left font-sans"
     >
       {/* Thumbnail Area with High-Quality Image */}
-      <div 
-        className="h-44 w-full relative flex items-end justify-between p-3 border-b border-border bg-surface-raised bg-cover bg-center"
-        style={{ backgroundImage: `url('${selectedImage}')` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90"></div>
+      <div className="h-44 w-full relative flex items-end justify-between p-3 border-b border-border bg-surface-raised overflow-hidden">
+        <Image 
+          src={selectedImage}
+          alt={work.title || "Research Publication"}
+          fill
+          className="object-cover z-0"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90 z-0"></div>
         
         {/* Metadata Badges Overlay on Image */}
         <div className="relative z-10 flex flex-wrap gap-2 w-full">
