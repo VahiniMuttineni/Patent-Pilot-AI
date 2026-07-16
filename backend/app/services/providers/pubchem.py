@@ -14,10 +14,13 @@ class PubChemProvider(PatentProviderAdapter):
     async def retrieve_by_smiles(self, canonical_smiles: str) -> ProviderResponse:
         start_time = time.time()
         
+        import urllib.parse
+        encoded_smiles = urllib.parse.quote(canonical_smiles)
+        
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
                 # 1. First, try exact CID lookup
-                url_cid = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{canonical_smiles}/cids/JSON"
+                url_cid = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{encoded_smiles}/cids/JSON"
                 target_cids = []
                 primary_cid = None
                 
@@ -31,7 +34,7 @@ class PubChemProvider(PatentProviderAdapter):
                     pass
                 
                 # 2. Also perform real-time 2D similarity search to find homologous chemical structures for comprehensive FTO
-                url_sim = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/fastsimilarity_2d/smiles/{canonical_smiles}/cids/JSON?Threshold=82"
+                url_sim = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/fastsimilarity_2d/smiles/{encoded_smiles}/cids/JSON?Threshold=82"
                 try:
                     sim_data = await self.fetch_json(client, url_sim)
                     sim_cids = [str(c) for c in sim_data.get("IdentifierList", {}).get("CID", [])]
