@@ -116,10 +116,10 @@ export default function PatentDetailsPage() {
               <button
                 onClick={() => setCompareMode(!compareMode)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs font-medium transition-colors ml-1",
+                  "flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs font-medium transition-colors ml-1 shadow-sm",
                   compareMode
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-background hover:bg-border/50 text-text-secondary"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary"
                 )}
               >
                 <GitCompare className="h-3.5 w-3.5" />
