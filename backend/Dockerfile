@@ -36,6 +36,12 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PATH="/opt/venv/bin:$PATH"
 ENV ENVIRONMENT=production
 
+# CRITICAL MEMORY OPTIMIZATION FOR FREE TIERS (512MB RAM Limit)
+# Limits glibc memory arenas to prevent severe memory fragmentation from PyTorch/Faiss/RDKit
+ENV MALLOC_ARENA_MAX=2
+# Force garbage collection to run more aggressively
+ENV PYTHONGC=2
+
 # Install runtime dependencies only (libpq for asyncpg)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
