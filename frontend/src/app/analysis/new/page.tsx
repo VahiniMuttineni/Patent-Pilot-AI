@@ -25,7 +25,7 @@ export default function NewAnalysisPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
 
-  const [smiles, setSmiles] = useState("Cc1ccc(cc1)Nc2ncnc3[nH]ccc23");
+  const [smiles, setSmiles] = useState("");
   const [jurisdictions, setJurisdictions] = useState<string[]>(["US", "EP"]);
   const [includePending, setIncludePending] = useState(true);
   const [submitting, setSubmitting] = useState(false);
